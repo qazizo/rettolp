@@ -1,0 +1,22 @@
+.wrapper {
+  border: 1px solid;
+  height: 100%;
+}
+
+.label {
+  display: block;
+  padding: 0.5em;
+  border-bottom: 1px solid;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li {
+  padding: 0.5em;
+  cursor: grab;
+  user-select: none;
+}

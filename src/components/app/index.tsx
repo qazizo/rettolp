@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import ColumnsList from '../columns-list';
 import styles from './style.module.css';
 
 export type Column = {name: string; function: 'dimension' | 'measure'};
@@ -43,7 +44,7 @@ export default function App() {
 
   return (
     <div className={styles.container}>
-      <div></div>
+      <div>{columns && <ColumnsList columns={columns} />}</div>
 
       <div></div>
     </div>
