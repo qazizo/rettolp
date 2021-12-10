@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import ColumnInput from '../column-input';
 import ColumnsList from '../columns-list';
 import styles from './style.module.css';
 
@@ -46,7 +47,22 @@ export default function App() {
     <div className={styles.container}>
       <div>{columns && <ColumnsList columns={columns} />}</div>
 
-      <div></div>
+      <div>
+        <div className={styles.inputs}>
+          <label>Dimension</label>
+          <ColumnInput
+            value={selectedDimension}
+            onAdd={(column) => selectDimension(column)}
+            onClear={() => selectDimension(undefined)}
+          />
+          <label>Measures</label>
+          <ColumnInput
+            value={selectedMeasure}
+            onAdd={(column) => selectMeasure(column)}
+            onClear={() => selectMeasure(undefined)}
+          />
+        </div>
+      </div>
     </div>
   );
 }

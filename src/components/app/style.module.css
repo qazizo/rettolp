@@ -11,3 +11,11 @@
   flex: 4;
   padding: 2em;
 }
+
+.inputs {
+  display: grid;
+  grid-template-columns: max-content auto;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 2em;
+}
