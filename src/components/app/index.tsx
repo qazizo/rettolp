@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import ColumnInput from '../column-input';
 import ColumnsList from '../columns-list';
+import Plot from '../plot';
 import styles from './style.module.css';
 
 export type Column = {name: string; function: 'dimension' | 'measure'};
@@ -62,7 +63,22 @@ export default function App() {
             onClear={() => selectMeasure(undefined)}
           />
         </div>
+
+        {selectedDimension && selectedMeasure && data && (
+          <Plot
+            data={transformDataIntoPlotPoints(data)}
+            dimension={selectedDimension}
+            measure={selectedMeasure}
+          />
+        )}
       </div>
     </div>
   );
+}
+
+function transformDataIntoPlotPoints(data: Data) {
+  return data[0].values.map((name, index) => ({
+    name: String(name),
+    value: Math.round(Number(data[1].values[index])),
+  }));
 }
