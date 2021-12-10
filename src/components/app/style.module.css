@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.container > :first-child {
+  flex: 1;
+}
+
+.container > :last-child {
+  flex: 4;
+  padding: 2em;
+}
