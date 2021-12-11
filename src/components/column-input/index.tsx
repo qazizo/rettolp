@@ -2,7 +2,7 @@ import styles from './style.module.css';
 
 type ColumnInputProps = {
   type: string;
-  value?: string;
+  value?: string | string[];
   onAdd: (column: string) => void;
   onClear: () => void;
 };
@@ -26,10 +26,18 @@ export default function ColumnInput({
         const column = e.dataTransfer.getData(type);
         onAdd(column);
       }}>
-      {value && (
+      {!!value?.length && (
         <>
-          <div>
-            <div className={styles.element}>{value}</div>
+          <div style={{display: 'flex'}}>
+            {Array.isArray(value) ? (
+              value.map((element) => (
+                <div className={styles.element} key={element}>
+                  {element}
+                </div>
+              ))
+            ) : (
+              <div className={styles.element}>{value}</div>
+            )}
           </div>
           <button className={styles.clearButton} onClick={onClear}>
             Clear

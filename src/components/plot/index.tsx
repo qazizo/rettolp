@@ -9,16 +9,16 @@ import {
 } from 'recharts';
 
 type PlotProps = {
-  data: {name: string; value: number}[];
+  data: Record<string, string | number>[];
   dimension: string;
-  measure: string;
+  measures: string[];
 };
 
-export default function Plot({data, dimension, measure}: PlotProps) {
+export default function Plot({data, dimension, measures}: PlotProps) {
   return (
     <ResponsiveContainer width="100%" height="80%">
       <LineChart data={data} margin={{top: 0, bottom: 20, right: 20, left: 10}}>
-        <XAxis dataKey="name" padding={{left: 40, right: 40}}>
+        <XAxis dataKey={dimension} padding={{left: 40, right: 40}}>
           <Label
             value={dimension}
             stroke="#999"
@@ -27,27 +27,38 @@ export default function Plot({data, dimension, measure}: PlotProps) {
           />
         </XAxis>
         <YAxis
-          dataKey="value"
           tickFormatter={(value) =>
-            new Intl.NumberFormat('en', {notation: 'compact'}).format(value)
+            Intl.NumberFormat('en', {notation: 'compact'}).format(value)
           }
           padding={{bottom: 40, top: 40}}>
           <Label
-            value={measure}
+            value={measures.join(' & ')}
             stroke="#999"
-            position="insideLeft"
-            offset={0}
+            position="insideBottomLeft"
+            offset={10}
             angle={-90}
           />
         </YAxis>
-        <Line
-          dataKey="value"
-          stroke="#333"
-          strokeWidth="2"
-          dot={{fill: '#333', r: 6}}
-        />
-        <Tooltip formatter={(value: string) => [value, measure]} />
+        {measures.map((measure) => {
+          const color = getRandomDarkColor();
+          return (
+            <Line
+              dataKey={measure}
+              stroke={color}
+              strokeWidth="2"
+              dot={{fill: color, r: 4}}
+              key={measure}
+            />
+          );
+        })}
+        <Tooltip />
       </LineChart>
     </ResponsiveContainer>
   );
+}
+
+function getRandomDarkColor() {
+  let color = '#';
+  for (let i = 0; i < 6; i++) color += Math.floor(Math.random() * 8);
+  return color;
 }

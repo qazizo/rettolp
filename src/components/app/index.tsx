@@ -13,11 +13,11 @@ async function fetchColumns() {
   return data as Column[];
 }
 
-async function fetchData(dimension: string, measure: string) {
+async function fetchData(dimension: string, measures: string[]) {
   const response = await fetch('https://plotter-task.herokuapp.com/data', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({dimension, measures: [measure]}),
+    body: JSON.stringify({dimension, measures}),
   });
   const data = await response.json();
   return data as Data;
@@ -25,30 +25,32 @@ async function fetchData(dimension: string, measure: string) {
 
 export default function App() {
   const [columns, setColumns] = useState<Column[]>();
-  const [selectedDimension, selectDimension] = useState<string>();
-  const [selectedMeasure, selectMeasure] = useState<string>();
+  const [selectedDimension, setSelectedDimension] = useState<string>();
+  const [selectedMeasures, setSelectedMeasures] = useState<string[]>([]);
   const [data, setData] = useState<Data>();
   const [error, setError] = useState<Error>();
+
+  const usedColumns = selectedMeasures.concat(selectedDimension || []);
 
   useEffect(() => {
     fetchColumns().then(setColumns).catch(setError);
   }, []);
 
   useEffect(() => {
-    if (selectedDimension && selectedMeasure) {
-      fetchData(selectedDimension, selectedMeasure)
+    if (selectedDimension && selectedMeasures) {
+      fetchData(selectedDimension, selectedMeasures)
         .then(setData)
         .catch(setError);
     } else {
       setData(undefined);
     }
-  }, [selectedDimension, selectedMeasure]);
+  }, [selectedDimension, selectedMeasures]);
 
   return (
     <div className={styles.container}>
       <div>
         {columns ? (
-          <ColumnsList columns={columns} />
+          <ColumnsList columns={columns} usedColumns={usedColumns} />
         ) : (
           error && <ErrorLine message={error.message} />
         )}
@@ -60,23 +62,25 @@ export default function App() {
           <ColumnInput
             type="dimension"
             value={selectedDimension}
-            onAdd={(column) => selectDimension(column)}
-            onClear={() => selectDimension(undefined)}
+            onAdd={(column) => setSelectedDimension(column)}
+            onClear={() => setSelectedDimension(undefined)}
           />
           <label>Measures</label>
           <ColumnInput
             type="measure"
-            value={selectedMeasure}
-            onAdd={(column) => selectMeasure(column)}
-            onClear={() => selectMeasure(undefined)}
+            value={selectedMeasures}
+            onAdd={(column) =>
+              setSelectedMeasures([...selectedMeasures, column])
+            }
+            onClear={() => setSelectedMeasures([])}
           />
         </div>
 
-        {selectedDimension && selectedMeasure && data ? (
+        {selectedDimension && selectedMeasures && data ? (
           <Plot
             data={transformDataIntoPlotPoints(data)}
             dimension={selectedDimension}
-            measure={selectedMeasure}
+            measures={selectedMeasures}
           />
         ) : (
           error && <ErrorLine message={error.message} />
@@ -91,8 +95,10 @@ function ErrorLine({message}: {message: string}) {
 }
 
 function transformDataIntoPlotPoints(data: Data) {
-  return data[0].values.map((name, index) => ({
-    name: String(name),
-    value: Math.round(Number(data[1].values[index])),
-  }));
+  return data[0].values.map((_, index) =>
+    data.reduce<Record<string, string | number>>((point, element) => {
+      point[element.name] = element.values[index];
+      return point;
+    }, {})
+  );
 }

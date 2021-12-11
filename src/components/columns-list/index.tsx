@@ -1,9 +1,9 @@
 import {Column} from '../app';
 import styles from './style.module.css';
 
-type ColumnsListProps = {columns: Column[]};
+type ColumnsListProps = {columns: Column[]; usedColumns?: string[]};
 
-export default function ColumnsList({columns}: ColumnsListProps) {
+export default function ColumnsList({columns, usedColumns}: ColumnsListProps) {
   return (
     <div className={styles.wrapper}>
       <label className={styles.label}>Columns</label>
@@ -11,7 +11,7 @@ export default function ColumnsList({columns}: ColumnsListProps) {
         {columns.map(({name, function: type}) => (
           <li
             key={name}
-            draggable
+            draggable={!usedColumns?.includes(name)}
             onDragStart={(e) => {
               e.dataTransfer.setData(type, name);
             }}>
