@@ -7,7 +7,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import getRandomDarkColor from '../../utils/generateDarkColor';
+import generateDarkColor from '../../utils/generateDarkColor';
 
 type PlotProps = {
   data: Record<string, string | number>[];
@@ -41,7 +41,7 @@ export default function Plot({data, dimension, measures}: PlotProps) {
           />
         </YAxis>
         {measures.map((measure) => {
-          const color = getRandomDarkColor();
+          const color = generateDarkColor();
           return (
             <Line
               dataKey={measure}
