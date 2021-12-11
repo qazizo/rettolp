@@ -1,27 +1,11 @@
 import {useEffect, useState} from 'react';
+import {Column, fetchColumns} from '../../api/columns';
+import {Data, fetchData} from '../../api/data';
+import {transformDataIntoPlotPoints} from '../../utils/transformDataIntoPlotPoints';
 import ColumnInput from '../column-input';
 import ColumnsList from '../columns-list';
 import Plot from '../plot';
 import styles from './style.module.css';
-
-export type Column = {name: string; function: 'dimension' | 'measure'};
-export type Data = {name: string; values: (string | number)[]}[];
-
-async function fetchColumns() {
-  const response = await fetch('https://plotter-task.herokuapp.com/columns');
-  const data = await response.json();
-  return data as Column[];
-}
-
-async function fetchData(dimension: string, measures: string[]) {
-  const response = await fetch('https://plotter-task.herokuapp.com/data', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({dimension, measures}),
-  });
-  const data = await response.json();
-  return data as Data;
-}
 
 export default function App() {
   const [columns, setColumns] = useState<Column[]>();
@@ -92,13 +76,4 @@ export default function App() {
 
 function ErrorLine({message}: {message: string}) {
   return <span style={{color: 'red'}}>Error: {message}</span>;
-}
-
-function transformDataIntoPlotPoints(data: Data) {
-  return data[0].values.map((_, index) =>
-    data.reduce<Record<string, string | number>>((point, element) => {
-      point[element.name] = element.values[index];
-      return point;
-    }, {})
-  );
 }

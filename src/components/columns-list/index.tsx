@@ -1,4 +1,4 @@
-import {Column} from '../app';
+import {Column} from '../../api/columns';
 import styles from './style.module.css';
 
 type ColumnsListProps = {columns: Column[]; usedColumns?: string[]};

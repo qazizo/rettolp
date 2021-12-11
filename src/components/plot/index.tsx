@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import getRandomDarkColor from '../../utils/generateDarkColor';
 
 type PlotProps = {
   data: Record<string, string | number>[];
@@ -55,10 +56,4 @@ export default function Plot({data, dimension, measures}: PlotProps) {
       </LineChart>
     </ResponsiveContainer>
   );
-}
-
-function getRandomDarkColor() {
-  let color = '#';
-  for (let i = 0; i < 6; i++) color += Math.floor(Math.random() * 8);
-  return color;
 }
