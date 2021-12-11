@@ -52,12 +52,14 @@ export default function App() {
         <div className={styles.inputs}>
           <label>Dimension</label>
           <ColumnInput
+            type="dimension"
             value={selectedDimension}
             onAdd={(column) => selectDimension(column)}
             onClear={() => selectDimension(undefined)}
           />
           <label>Measures</label>
           <ColumnInput
+            type="measure"
             value={selectedMeasure}
             onAdd={(column) => selectMeasure(column)}
             onClear={() => selectMeasure(undefined)}

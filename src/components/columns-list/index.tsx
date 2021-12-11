@@ -13,7 +13,7 @@ export default function ColumnsList({columns}: ColumnsListProps) {
             key={name}
             draggable
             onDragStart={(e) => {
-              e.dataTransfer.setData('text/plain', name);
+              e.dataTransfer.setData(type, name);
             }}>
             {name}
           </li>
