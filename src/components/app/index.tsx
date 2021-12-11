@@ -17,10 +17,7 @@ async function fetchData(dimension: string, measure: string) {
   const response = await fetch('https://plotter-task.herokuapp.com/data', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      dimension,
-      measures: [measure],
-    }),
+    body: JSON.stringify({dimension, measures: [measure]}),
   });
   const data = await response.json();
   return data as Data;
@@ -31,14 +28,17 @@ export default function App() {
   const [selectedDimension, selectDimension] = useState<string>();
   const [selectedMeasure, selectMeasure] = useState<string>();
   const [data, setData] = useState<Data>();
+  const [error, setError] = useState<Error>();
 
   useEffect(() => {
-    fetchColumns().then(setColumns);
+    fetchColumns().then(setColumns).catch(setError);
   }, []);
 
   useEffect(() => {
     if (selectedDimension && selectedMeasure) {
-      fetchData(selectedDimension, selectedMeasure).then(setData);
+      fetchData(selectedDimension, selectedMeasure)
+        .then(setData)
+        .catch(setError);
     } else {
       setData(undefined);
     }
@@ -46,7 +46,13 @@ export default function App() {
 
   return (
     <div className={styles.container}>
-      <div>{columns && <ColumnsList columns={columns} />}</div>
+      <div>
+        {columns ? (
+          <ColumnsList columns={columns} />
+        ) : (
+          error && <ErrorLine message={error.message} />
+        )}
+      </div>
 
       <div>
         <div className={styles.inputs}>
@@ -66,16 +72,22 @@ export default function App() {
           />
         </div>
 
-        {selectedDimension && selectedMeasure && data && (
+        {selectedDimension && selectedMeasure && data ? (
           <Plot
             data={transformDataIntoPlotPoints(data)}
             dimension={selectedDimension}
             measure={selectedMeasure}
           />
+        ) : (
+          error && <ErrorLine message={error.message} />
         )}
       </div>
     </div>
   );
+}
+
+function ErrorLine({message}: {message: string}) {
+  return <span style={{color: 'red'}}>Error: {message}</span>;
 }
 
 function transformDataIntoPlotPoints(data: Data) {
